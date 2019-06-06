@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataSource name="EmerAgency.db">
-  <database-model serializer="dbm" rdbms="SQLITE" format-version="4.7">
-    <root id="1"/>
+  <database-model serializer="dbm" dbms="SQLITE" family-id="SQLITE" format-version="4.14">
+    <root id="1">
+      <ServerVersion>3.25.1</ServerVersion>
+    </root>
     <schema id="2" parent="1" name="main">
       <Current>1</Current>
       <Visible>1</Visible>
@@ -32,8 +34,7 @@
       <NameSurrogate>1</NameSurrogate>
       <ColNames>eventID
 category</ColNames>
-      <ColumnCollations>
-</ColumnCollations>
+      <ColumnCollations></ColumnCollations>
       <Unique>1</Unique>
     </index>
     <key id="16" parent="6" name="eventCategory_eventID_category_pk">
@@ -82,7 +83,7 @@ category</ColNames>
     </column>
     <column id="25" parent="8" name="date">
       <Position>3</Position>
-      <DataType>Date|0s</DataType>
+      <DataType>TEXT|0s</DataType>
       <NotNull>1</NotNull>
     </column>
     <column id="26" parent="8" name="userID">
@@ -95,9 +96,7 @@ category</ColNames>
       <ColNames>eventID
 date
 userID</ColNames>
-      <ColumnCollations>
-
-</ColumnCollations>
+      <ColumnCollations></ColumnCollations>
       <Unique>1</Unique>
     </index>
     <key id="28" parent="8" name="eventsUpdate_eventID_date_userID_pk">
