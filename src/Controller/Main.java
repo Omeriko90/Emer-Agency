@@ -1,12 +1,11 @@
-package sample;
+package Controller;
 
 import Model.sqlConnection;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
-
+import Controller.Controller;
+import Model.Model;
+import View.View;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 
@@ -19,7 +18,12 @@ public class Main extends Application {
         PreparedStatement pst = conn.prepareStatement(query);
         pst.execute();
         conn.close();
+    }
 
+    public void creat(){
+        Model model=new Model();
+        View view=new View();
+        Controller controller=new Controller(model,view);
     }
 
 
