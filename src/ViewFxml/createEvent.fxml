@@ -13,7 +13,7 @@
       <Label layoutX="44.0" layoutY="104.0" text="Choose Categories:" />
       <Label layoutX="43.0" layoutY="157.0" text="Choose Organization:" />
       <CheckBox fx:id="categoriesList" layoutX="224.0" layoutY="104.0" mnemonicParsing="false" text="Categories" />
-      <ChoiceBox fx:id="allOrg" layoutX="225.0" layoutY="153.0" prefHeight="27.0" prefWidth="150.0" />
+      <ChoiceBox fx:id="allOrg" layoutX="225.0" layoutY="153.0" onDragDetected="#getUsersOfOrg" prefHeight="27.0" prefWidth="150.0" />
       <Button fx:id="btn_addOrg" layoutX="35.0" layoutY="283.0" mnemonicParsing="false" onAction="#addAnotherOrg" text="add Another Organization" />
       <Label layoutX="43.0" layoutY="207.0" text="Choose In Charge:" />
       <ChoiceBox fx:id="usersOrg" layoutX="225.0" layoutY="201.0" prefHeight="27.0" prefWidth="150.0" />
