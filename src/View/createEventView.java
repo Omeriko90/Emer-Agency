@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 public class createEventView {
 
-    ArrayList<Pair> organizations = new ArrayList<>();
+    ArrayList<Pair<String,String>> organizations = new ArrayList<>();
     ObservableList<String> allOrganizations;
 
     Controller controller;
@@ -33,12 +33,32 @@ public class createEventView {
 
     //action for submit event button
     public void submitEvent() {
-        String[] finalOrg = 
+        String[] finalOrg = getfinalOrfanizations();
+        String[] finalUsers = getfinalUsers();
+
         //send the details to the controller create event function
-        controller.creatEvent(eventName.getText(),)
+        controller.creatEvent(eventName.getText(),,finalOrg,finalUsers);
 
         //after submit button deletes orgs array
         organizations = new ArrayList<>();
+    }
+    //insert all organization into string array
+    private String[] getfinalOrfanizations() {
+        String[] allOrg = new String[organizations.size()];
+        for(int i=0;i<organizations.size();i++){
+            String org = organizations.get(i).getKey();
+            allOrg[i] = org;
+        }
+        return allOrg;
+    }
+    //return all final users into string array
+    private String[] getfinalUsers() {
+        String[] allusers = new String[organizations.size()];
+        for(int i=0;i<organizations.size();i++){
+            String user = organizations.get(i).getValue();
+            allusers[i] = user;
+        }
+        return allusers;
     }
 
     //case of more then one organization for event
