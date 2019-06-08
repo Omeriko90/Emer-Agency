@@ -6,11 +6,9 @@ import java.util.ArrayList;
 
 public class Controller {
     private Model model;
-    private View view;
 
-    public Controller(Model mainModel,View mainView){
+    public Controller(Model mainModel){
         model=mainModel;
-        view=mainView;
     }
 
     public String creatEvent(String titleEvent, String[] category, String[] organization, int[] manInCharge){

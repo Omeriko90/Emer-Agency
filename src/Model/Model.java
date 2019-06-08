@@ -10,13 +10,13 @@ import java.util.Date;
 
 
 public class Model {
-    private Controller controller;
     private Connection conn;
     static int eventId=0;
 
     public Model(){
         String query = "select max(id) from events";
         try {
+            conn = sqlConnection.Connector();
             Statement pst = conn.createStatement();
             try (ResultSet rs = pst.executeQuery(query)) {
                 ResultSet nrs = pst.executeQuery(query);
@@ -74,7 +74,7 @@ public class Model {
                 PreparedStatement pst = conn.prepareStatement(query3);
                 pst.setInt(1, eventId);
                 pst.setString(2, organization[i]);
-                pst.setInt(1, manInCharge[i]);
+                pst.setInt(3, manInCharge[i]);
                 pst.execute();
                 conn.close();
             } catch (SQLException e) {
@@ -116,18 +116,19 @@ public class Model {
         boolean userAsPermission=checkIfUserAsPermission(userId,currentEventId);
         if(!userAsPermission)
             return "user dont have write permission";
+
         //insert update event to the db
-        String query = "insert into eventsUpdate (eventID,update,date,userID) values(?,?,?,?)";
+        String query = "insert into eventsUpdate (eventID,date,userID,updateText) values(?,?,?,?)";
         Date date = Calendar.getInstance().getTime();
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         String strDate = dateFormat.format(date);
         try {
             conn = sqlConnection.Connector();
             PreparedStatement pst = conn.prepareStatement(query);
             pst.setInt(1,currentEventId);
-            pst.setString(2,Update);
-            pst.setString(3,strDate);
-            pst.setInt(4,userId);
+            pst.setString(4,Update);
+            pst.setString(2,strDate);
+            pst.setInt(3,userId);
             pst.execute();
             conn.close();
         } catch (SQLException e) {
@@ -159,10 +160,12 @@ public class Model {
         String queryForUser = "select rank from users where id=" + userId + "";
         int userRankFoundAns=0;
         try {
+            conn = sqlConnection.Connector();
             Statement pst = conn.createStatement();
             try (ResultSet rs = pst.executeQuery(queryForUser)) {
                 ResultSet nrs = pst.executeQuery(queryForUser);
                 userRankFoundAns=nrs.getInt(1);
+                conn.close();
             }
         }
         catch (SQLException e) {
@@ -171,10 +174,12 @@ public class Model {
         String queryForUserCharge= "select userID from organizationsEvent where eventID=" + currentEventId + "";
         int idUserCharge=0;
         try {
+            conn = sqlConnection.Connector();
             Statement pst = conn.createStatement();
             try (ResultSet rs = pst.executeQuery(queryForUserCharge)) {
                 ResultSet nrs = pst.executeQuery(queryForUserCharge);
                 idUserCharge=nrs.getInt(1);
+                conn.close();
             }
         }
         catch (SQLException e) {
@@ -184,10 +189,12 @@ public class Model {
         int chargeRank=0;
         if(idUserCharge!=0) {
             try {
+                conn = sqlConnection.Connector();
                 Statement pst = conn.createStatement();
                 try (ResultSet rs = pst.executeQuery(queryForChargeUser)) {
                     ResultSet nrs = pst.executeQuery(queryForChargeUser);
                     chargeRank=nrs.getInt(1);
+                    conn.close();
                 }
             }
             catch (SQLException e) {
@@ -198,21 +205,6 @@ public class Model {
         return userRankFoundAns>=chargeRank;
     }
 
-    private ResultSet resultSetQuery(String query){
-        ResultSet nrs=null;
-        try {
-            conn = sqlConnection.Connector();
-            PreparedStatement pst = conn.prepareStatement(query);
-            try (ResultSet rs = pst.executeQuery(query)) {
-                nrs = pst.executeQuery(query);
-                conn.close();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return nrs;
-    }
-
 
     public int getEventId() {
         return eventId;
@@ -221,9 +213,15 @@ public class Model {
     public ArrayList<String> getAllWorkersInOrganization(String organization) {
         ArrayList<String>worker=new ArrayList<>();
         String query = "select id from users where organization='" + organization + "'";
-        try(ResultSet userRankFound=resultSetQuery(query)) {
-            while (userRankFound.next()) {
-                worker.add(String.valueOf(userRankFound.getInt(1)));
+        try {
+            conn = sqlConnection.Connector();
+            Statement pst = conn.createStatement();
+            try (ResultSet rs = pst.executeQuery(query)) {
+                ResultSet nrs = pst.executeQuery(query);
+                while (nrs.next()) {
+                    worker.add(String.valueOf(nrs.getInt(1)));
+                }
+                conn.close();
             }
         }
         catch (SQLException e) {

@@ -7,6 +7,7 @@ import Model.Model;
 import View.View;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.util.ArrayList;
 
 public class Main extends Application {
 
@@ -14,8 +15,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
         Model model=new Model();
-        View view=new View();
-        Controller controller=new Controller(model,view);
+        Controller controller=new Controller(model);
         String [] category=new String[2];
         category[0]="criminal";
         category[1]="nationalistic";
@@ -26,7 +26,12 @@ public class Main extends Application {
         manIn[0]=1111;
         manIn[1]=2222;
         //System.out.println(controller.creatEvent("Bank robbery",category,organization,manIn));
-        System.out.println(controller.addUpdate(1111,0,"event start"));
+        //System.out.println(controller.addUpdate(1111,40,"event start"));
+        ArrayList<String> work=new ArrayList<>();
+        work=controller.getAllWorkersInOrganization("POLICE");
+        for(int i=0;i<work.size();i++)
+            System.out.println(work.get(i));
+
     }
 
     public static void main(String[] args) {

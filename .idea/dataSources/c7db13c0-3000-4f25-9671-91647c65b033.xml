@@ -76,20 +76,19 @@ category</ColNames>
       <Position>1</Position>
       <DataType>int|0s</DataType>
     </column>
-    <column id="24" parent="8" name="update">
+    <column id="24" parent="8" name="date">
       <Position>2</Position>
-      <DataType>Text|0s</DataType>
-      <NotNull>1</NotNull>
-    </column>
-    <column id="25" parent="8" name="date">
-      <Position>3</Position>
       <DataType>TEXT|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="26" parent="8" name="userID">
-      <Position>4</Position>
+    <column id="25" parent="8" name="userID">
+      <Position>3</Position>
       <DataType>int|0s</DataType>
       <NotNull>1</NotNull>
+    </column>
+    <column id="26" parent="8" name="updateText">
+      <Position>4</Position>
+      <DataType>text|0s</DataType>
     </column>
     <index id="27" parent="8" name="sqlite_autoindex_eventsUpdate_1">
       <NameSurrogate>1</NameSurrogate>

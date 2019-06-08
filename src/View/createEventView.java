@@ -37,7 +37,7 @@ public class createEventView {
         String[] finalUsers = getfinalUsers();
 
         //send the details to the controller create event function
-        controller.creatEvent(eventName.getText(),,finalOrg,finalUsers);
+        //controller.creatEvent(eventName.getText(),,finalOrg,finalUsers);
 
         //after submit button deletes orgs array
         organizations = new ArrayList<>();
