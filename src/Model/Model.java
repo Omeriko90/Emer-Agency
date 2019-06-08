@@ -1,9 +1,7 @@
 package Model;
 import Controller.Controller;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+
+import java.sql.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -14,10 +12,24 @@ import java.util.Date;
 public class Model {
     private Controller controller;
     private Connection conn;
-    static int eventId;
+    static int eventId=0;
 
     public Model(){
-        eventId=0;
+        String query = "select max(id) from events";
+        try {
+            Statement pst = conn.createStatement();
+            try (ResultSet rs = pst.executeQuery(query)) {
+                ResultSet nrs = pst.executeQuery(query);
+                eventId=nrs.getInt(1);
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void UpdateEventId(){
+        Model.eventId++;
     }
 
     public String creatEvent(String titleEvent, String[] category, String [] organization, int [] manInCharge){
@@ -30,7 +42,8 @@ public class Model {
         try {
             conn = sqlConnection.Connector();
             PreparedStatement pst = conn.prepareStatement(query);
-            pst.setInt(1,eventId++);
+            UpdateEventId();
+            pst.setInt(1,eventId);
             pst.setString(2,titleEvent);
             pst.setString(3,strDate);
             pst.setString(4,"open");
@@ -44,7 +57,7 @@ public class Model {
             String query2 = "insert into eventCategory (eventID,category) values(?,?)";
             try {
                 conn = sqlConnection.Connector();
-                PreparedStatement pst = conn.prepareStatement(query);
+                PreparedStatement pst = conn.prepareStatement(query2);
                 pst.setInt(1, eventId);
                 pst.setString(2, category[i]);
                 pst.execute();
@@ -58,7 +71,7 @@ public class Model {
             String query3 = "insert into organizationsEvent (eventID,organization,userID) values(?,?,?)";
             try {
                 conn = sqlConnection.Connector();
-                PreparedStatement pst = conn.prepareStatement(query);
+                PreparedStatement pst = conn.prepareStatement(query3);
                 pst.setInt(1, eventId);
                 pst.setString(2, organization[i]);
                 pst.setInt(1, manInCharge[i]);
@@ -72,8 +85,22 @@ public class Model {
     }
 
     private boolean checkIfUserExists(int userId){
-        String query = "select count(*) as found from users where id='" + userId + "'";
-        return foundQuery(query);
+        String query = "select count(*) as found from users where id=" + userId + "";
+        try {
+            conn = sqlConnection.Connector();
+            PreparedStatement pst = conn.prepareStatement(query);
+            try (ResultSet rs = pst.executeQuery()) {
+                if (rs.next()) {
+                    boolean found = rs.getBoolean(1);
+                    if (found)
+                        return true;
+                }
+                conn.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     public String addUpdate(int userId, int currentEventId, String Update){
@@ -110,49 +137,7 @@ public class Model {
     }
 
     private boolean checkIfEventExists(int currentEventId) {
-        String query = "select count(*) as found from events where id='" + currentEventId + "'";
-        return foundQuery(query);
-    }
-
-    private boolean checkIfUserAsPermission(int userId, int currentEventId) {
-        String queryForUser = "select rank from users where id='" + userId + "'";
-        ResultSet userRankFound=resultSetQuery(queryForUser);
-        String queryForUserCharge= "select userID from organizationsEvent where eventID='" + currentEventId + "'";
-        ResultSet userCharge=resultSetQuery(queryForUserCharge);
-        int idUserCharge=0;
-        try {
-            idUserCharge=userCharge.getInt(1);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        String queryForChargeUser="select rank from users where id='" + idUserCharge + "'";
-        if(idUserCharge!=0) {
-            ResultSet userChargeRankFound = resultSetQuery(queryForChargeUser);
-            try {
-                return (userRankFound.getInt(1)>=userChargeRankFound.getInt(1));
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-        return false;
-    }
-
-    private ResultSet resultSetQuery(String query){
-        ResultSet nrs=null;
-        try {
-            conn = sqlConnection.Connector();
-            PreparedStatement pst = conn.prepareStatement(query);
-            try (ResultSet rs = pst.executeQuery()) {
-                nrs = pst.executeQuery(query);
-                conn.close();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return nrs;
-    }
-
-    private boolean foundQuery(String query){
+        String query = "select count(*) as found from events where id=" + currentEventId + "";
         try {
             conn = sqlConnection.Connector();
             PreparedStatement pst = conn.prepareStatement(query);
@@ -170,6 +155,65 @@ public class Model {
         return false;
     }
 
+    private boolean checkIfUserAsPermission(int userId, int currentEventId) {
+        String queryForUser = "select rank from users where id=" + userId + "";
+        int userRankFoundAns=0;
+        try {
+            Statement pst = conn.createStatement();
+            try (ResultSet rs = pst.executeQuery(queryForUser)) {
+                ResultSet nrs = pst.executeQuery(queryForUser);
+                userRankFoundAns=nrs.getInt(1);
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+        String queryForUserCharge= "select userID from organizationsEvent where eventID=" + currentEventId + "";
+        int idUserCharge=0;
+        try {
+            Statement pst = conn.createStatement();
+            try (ResultSet rs = pst.executeQuery(queryForUserCharge)) {
+                ResultSet nrs = pst.executeQuery(queryForUserCharge);
+                idUserCharge=nrs.getInt(1);
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+        String queryForChargeUser="select rank from users where id=" + idUserCharge + "";
+        int chargeRank=0;
+        if(idUserCharge!=0) {
+            try {
+                Statement pst = conn.createStatement();
+                try (ResultSet rs = pst.executeQuery(queryForChargeUser)) {
+                    ResultSet nrs = pst.executeQuery(queryForChargeUser);
+                    chargeRank=nrs.getInt(1);
+                }
+            }
+            catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+        }
+        return userRankFoundAns>=chargeRank;
+    }
+
+    private ResultSet resultSetQuery(String query){
+        ResultSet nrs=null;
+        try {
+            conn = sqlConnection.Connector();
+            PreparedStatement pst = conn.prepareStatement(query);
+            try (ResultSet rs = pst.executeQuery(query)) {
+                nrs = pst.executeQuery(query);
+                conn.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return nrs;
+    }
+
+
     public int getEventId() {
         return eventId;
     }
@@ -179,7 +223,7 @@ public class Model {
         String query = "select id from users where organization='" + organization + "'";
         try(ResultSet userRankFound=resultSetQuery(query)) {
             while (userRankFound.next()) {
-                worker.add(userRankFound.getString(1));
+                worker.add(String.valueOf(userRankFound.getInt(1)));
             }
         }
         catch (SQLException e) {
