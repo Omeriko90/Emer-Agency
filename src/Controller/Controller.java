@@ -6,12 +6,30 @@ import java.util.ArrayList;
 
 public class Controller {
     private Model model;
+    private View view;
 
-    public Controller(Model mainModel){
-        model=mainModel;
+    public Controller(Model mainModel,View modelView){
+        model=mainModel; view=modelView;
     }
 
-    public String creatEvent(String titleEvent, String[] category, String[] organization, int[] manInCharge){
+    public Controller(){
+
+    }
+
+    public void setModel(Model theModel){
+        model=theModel;
+    }
+
+    public void setView(View theView){
+        view=theView;
+
+    }
+    public String creatEvent(String titleEvent, String[] category, String[] organization, String[] usersSelected){
+        int[] manInCharge = new int[usersSelected.length];
+        //just casting the users from string to int expected by the model
+        for(int i = 0 ; i<manInCharge.length;i++){
+            manInCharge[i] = Integer.parseInt(usersSelected[i]);
+        }
         return model.creatEvent(titleEvent,category,organization,manInCharge);
     }
 
@@ -26,4 +44,5 @@ public class Controller {
     public ArrayList<String> getAllWorkersInOrganization(String organization){
         return model.getAllWorkersInOrganization(organization);
     }
+
 }
