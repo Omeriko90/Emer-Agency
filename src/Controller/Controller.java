@@ -11,7 +11,7 @@ public class Controller {
         model=mainModel;
     }
 
-    public String creatEvent(String titleEvent, String[] category, String[] organization, int[] manInCharge){
+    public String creatEvent(String titleEvent, String[] category, String[] organization, String[] manInCharge){
         return model.creatEvent(titleEvent,category,organization,manInCharge);
     }
 

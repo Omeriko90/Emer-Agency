@@ -22,15 +22,15 @@ public class Main extends Application {
         String [] organization=new String[2];
         organization[0]="POLICE";
         organization[1]="MAGEN DAVID ADOM";
-        int [] manIn=new int[2];
-        manIn[0]=1111;
-        manIn[1]=2222;
-        //System.out.println(controller.creatEvent("Bank robbery",category,organization,manIn));
-        //System.out.println(controller.addUpdate(1111,40,"event start"));
-        ArrayList<String> work=new ArrayList<>();
-        work=controller.getAllWorkersInOrganization("POLICE");
-        for(int i=0;i<work.size();i++)
-            System.out.println(work.get(i));
+        String [] manIn=new String[2];
+        manIn[0]="Racheli Sagron";
+        manIn[1]="Omer Domb";
+//        System.out.println(controller.creatEvent("Bank robbery",category,organization,manIn));
+        System.out.println(controller.addUpdate(1,5,"Started tracking"));
+//        ArrayList<String> work=new ArrayList<>();
+//        work=controller.getAllWorkersInOrganization("POLICE");
+//        for(int i=0;i<work.size();i++)
+//            System.out.println(work.get(i));
 
     }
 

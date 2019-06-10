@@ -1,5 +1,4 @@
 package Model;
-import Controller.Controller;
 
 import java.sql.*;
 import java.text.DateFormat;
@@ -32,10 +31,28 @@ public class Model {
         Model.eventId++;
     }
 
-    public String creatEvent(String titleEvent, String[] category, String [] organization, int [] manInCharge){
+    public String creatEvent(String titleEvent, String[] category, String [] organization, String [] manInCharge){
         Date date = Calendar.getInstance().getTime();
         DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
         String strDate = dateFormat.format(date);
+        int [] manInChargeId=new int[manInCharge.length];
+
+        //find user id
+        for(int i=0;i<manInCharge.length;i++) {
+            String userIdQuery = "select id from users where fullName='" + manInCharge[i]+"'";
+            try {
+                conn = sqlConnection.Connector();
+                Statement pst = conn.createStatement();
+                try (ResultSet rs = pst.executeQuery(userIdQuery)) {
+                    ResultSet nrs = pst.executeQuery(userIdQuery);
+                    manInChargeId[i]=nrs.getInt(1);
+                    conn.close();
+                }
+            }
+            catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
 
         //add to event db
         String query = "insert into events (id,title,date,status) values(?,?,?,?)";
@@ -74,7 +91,7 @@ public class Model {
                 PreparedStatement pst = conn.prepareStatement(query3);
                 pst.setInt(1, eventId);
                 pst.setString(2, organization[i]);
-                pst.setInt(3, manInCharge[i]);
+                pst.setInt(3, manInChargeId[i]);
                 pst.execute();
                 conn.close();
             } catch (SQLException e) {
@@ -112,10 +129,16 @@ public class Model {
         boolean eventFound=checkIfEventExists(currentEventId);
         if(!eventFound)
             return "event not found";
+        //check if the event belong to the user
+        boolean userConnectToEvent=checkIfUserConnectToEvent(userId,currentEventId);
+        if(!userConnectToEvent)
+            return "The event does not belong to the user's organization";
+
         //check if user as Write permission
         boolean userAsPermission=checkIfUserAsPermission(userId,currentEventId);
         if(!userAsPermission)
             return "user dont have write permission";
+
 
         //insert update event to the db
         String query = "insert into eventsUpdate (eventID,date,userID,updateText) values(?,?,?,?)";
@@ -135,6 +158,36 @@ public class Model {
             e.printStackTrace();
         }
         return "success";
+    }
+
+    private boolean checkIfUserConnectToEvent(int userId, int currentEventId) {
+        String query="select organization from users where id=" + userId + "";
+        String org="";
+        try {
+            conn = sqlConnection.Connector();
+            PreparedStatement pst = conn.prepareStatement(query);
+            try (ResultSet rs = pst.executeQuery()) {
+                org=rs.getString(1);
+                conn.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        String query2="select organization from organizationsEvent where eventID=" + currentEventId + "";
+        try {
+            conn = sqlConnection.Connector();
+            PreparedStatement pst = conn.prepareStatement(query2);
+            try (ResultSet rs = pst.executeQuery()) {
+                while (rs.next()){
+                    if(org.equals(rs.getString(1)))
+                        return true;
+                }
+                conn.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     private boolean checkIfEventExists(int currentEventId) {
@@ -212,14 +265,14 @@ public class Model {
 
     public ArrayList<String> getAllWorkersInOrganization(String organization) {
         ArrayList<String>worker=new ArrayList<>();
-        String query = "select id from users where organization='" + organization + "'";
+        String query = "select fullName from users where organization='" + organization + "'";
         try {
             conn = sqlConnection.Connector();
             Statement pst = conn.createStatement();
             try (ResultSet rs = pst.executeQuery(query)) {
                 ResultSet nrs = pst.executeQuery(query);
                 while (nrs.next()) {
-                    worker.add(String.valueOf(nrs.getInt(1)));
+                    worker.add((nrs.getString(1)));
                 }
                 conn.close();
             }
