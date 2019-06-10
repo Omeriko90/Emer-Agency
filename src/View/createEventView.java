@@ -43,6 +43,10 @@ public class createEventView extends AView{
         allOrg.setValue("POLICE");
         allOrg.setVisible(true);
         usersOrg.setDisable(true);
+        //Listener for checkbox changes
+        allOrg.getSelectionModel().selectedItemProperty().addListener((v,oldValue,newValue) ->{
+            getUsersOfOrg();
+        });
     }
 
     public createEventView() {
@@ -101,8 +105,10 @@ public class createEventView extends AView{
         String choosenUser = usersOrg.getValue();
         //case when try to add the same org twice
         if(organizationsChoosen.contains(ChoosenOrg)){
-            //alert "organization already added"
+            showAlert("organization has already been added");
+
         } else {
+            showAlert("organization added");
             organizationsChoosen.add(ChoosenOrg);
             usersChoosen.add(choosenUser);
         }
@@ -118,8 +124,10 @@ public class createEventView extends AView{
     public void addAnotherCategory(){
         if(categoryChoosen.contains(categoriesList.getValue())){
             //alert category already selected
+            showAlert("This category is already selected.\nPlease choose another one");
         }
         else{
+            showAlert("Category selected");
             categoryChoosen.add(categoriesList.getValue());
         }
     }
