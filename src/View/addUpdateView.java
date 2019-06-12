@@ -28,6 +28,6 @@ public class addUpdateView extends AView {
         //sending to the controller, model will check that user and event exist and user have the needed access
         String result = theController.addUpdate(userCreator,eventToUpdate,updateDesc);
         //show alert ans
-
+        showAlert(result);
     }
 }

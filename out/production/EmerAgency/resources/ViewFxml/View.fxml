@@ -5,18 +5,24 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.View">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.View">
    <children>
-      <Button fx:id="createEvent" layoutX="137.0" layoutY="167.0" mnemonicParsing="false" onAction="#createEvent" text="create event" />
-      <Button fx:id="addUpdate" layoutX="373.0" layoutY="167.0" mnemonicParsing="false" onAction="#addUpdate" prefHeight="39.0" prefWidth="108.0" text="add update">
+      <Button fx:id="createEvent" layoutX="20.0" layoutY="380.0" mnemonicParsing="false" onAction="#createEvent" prefHeight="49.0" prefWidth="170.0" styleClass="buttons" text="create event">
          <font>
-            <Font name="Calibri" size="18.0" />
+            <Font name="Gabriola" size="26.0" />
+         </font></Button>
+      <Button fx:id="addUpdate" layoutX="210.0" layoutY="380.0" mnemonicParsing="false" onAction="#addUpdate" prefHeight="49.0" prefWidth="170.0" styleClass="buttons" text="add update">
+         <font>
+            <Font name="Gabriola" size="26.0" />
          </font>
       </Button>
-      <Button fx:id="addOrg" layoutX="240.0" layoutY="266.0" mnemonicParsing="false" onAction="#addOrg" text="add organiztion" />
-      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="141.0" layoutY="66.0" prefHeight="53.0" prefWidth="318.0" text="Emer-Agency">
+      <Button fx:id="addOrg" layoutX="400.0" layoutY="380.0" mnemonicParsing="false" onAction="#addOrg" prefHeight="49.0" prefWidth="170.0" styleClass="buttons" text="add organiztion">
          <font>
-            <Font size="36.0" />
+            <Font name="Gabriola" size="26.0" />
+         </font></Button>
+      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="141.0" layoutY="20.0" prefHeight="53.0" prefWidth="318.0" text="Emer-Agency" textFill="WHITE">
+         <font>
+            <Font name="Gabriola" size="60.0" />
          </font></Label>
    </children>
 </AnchorPane>

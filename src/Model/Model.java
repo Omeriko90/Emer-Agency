@@ -36,6 +36,24 @@ public class Model {
         Date date = Calendar.getInstance().getTime();
         DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
         String strDate = dateFormat.format(date);
+        int [] manInChargeId=new int[manInCharge.length];
+
+        //find user id
+        for(int i=0;i<manInCharge.length;i++) {
+            String userIdQuery = "select id from users where fullName='" + manInCharge[i]+"'";
+            try {
+                conn = sqlConnection.Connector();
+                Statement pst = conn.createStatement();
+                try (ResultSet rs = pst.executeQuery(userIdQuery)) {
+                    ResultSet nrs = pst.executeQuery(userIdQuery);
+                    manInChargeId[i]=nrs.getInt(1);
+                    conn.close();
+                }
+            }
+            catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
 
         //add to event db
         String query = "insert into events (id,title,date,status) values(?,?,?,?)";
@@ -112,6 +130,10 @@ public class Model {
         boolean eventFound=checkIfEventExists(currentEventId);
         if(!eventFound)
             return "event not found";
+        //check if the event belong to the user
+        boolean userConnectToEvent=checkIfUserConnectToEvent(userId,currentEventId);
+        if(!userConnectToEvent)
+            return "The event does not belong to the user's organization";
         //check if user as Write permission
         boolean userAsPermission=checkIfUserAsPermission(userId,currentEventId);
         if(!userAsPermission)
@@ -137,6 +159,35 @@ public class Model {
         return "success";
     }
 
+    private boolean checkIfUserConnectToEvent(int userId, int currentEventId) {
+        String query="select organization from users where id=" + userId + "";
+        String org="";
+        try {
+            conn = sqlConnection.Connector();
+            PreparedStatement pst = conn.prepareStatement(query);
+            try (ResultSet rs = pst.executeQuery()) {
+                org=rs.getString(1);
+                conn.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        String query2="select organization from organizationsEvent where eventID=" + currentEventId + "";
+        try {
+            conn = sqlConnection.Connector();
+            PreparedStatement pst = conn.prepareStatement(query2);
+            try (ResultSet rs = pst.executeQuery()) {
+                while (rs.next()){
+                    if(org.equals(rs.getString(1)))
+                        return true;
+                }
+                conn.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
     private boolean checkIfEventExists(int currentEventId) {
         String query = "select count(*) as found from events where id=" + currentEventId + "";
         try {
@@ -212,7 +263,7 @@ public class Model {
 
     public ArrayList<String> getAllWorkersInOrganization(String organization) {
         ArrayList<String>worker=new ArrayList<>();
-        String query = "select id from users where organization='" + organization + "'";
+        String query = "select fullName from users where organization='" + organization + "'";
         try {
             conn = sqlConnection.Connector();
             Statement pst = conn.createStatement();
@@ -229,5 +280,55 @@ public class Model {
         }
         return  worker;
     }
+    public String addOrganization(int fromUser, int eventID, int toUser,String invitedOrg) {
+        /*todo:  use the add org from create event - try to check if user belongs the to organization
+		toUser's organization isnt part of fromUser's organization.
+        fromUser has writing permission on eventID
+        success: eventID now contains new organization
+                organization contains eventID
+         */
+        boolean userFound=checkIfUserExists(fromUser);
+        if(!userFound)
+            return "inviter user not found";
+        userFound=checkIfUserExists(toUser);
+        if(!userFound)
+            return "invited user not found";
+        //check if event exists
+        boolean eventFound=checkIfEventExists(eventID);
+        if(!eventFound)
+            return "event not found";
+        //check if user as Write permission
 
+        if(!checkIfUserAsPermission(fromUser,eventID))
+            return "you dont have write permission";
+        if (!getAllWorkersInOrganization(invitedOrg).contains(String.valueOf(toUser)))
+            return "The user you invited does not belong to the wanted organization.";
+        if (eventContainsOrganization(eventID,invitedOrg))
+            return "This organization already taking part on your event.";
+
+
+
+
+        return "success";
+    }
+
+    public boolean eventContainsOrganization(int eventID1, String invitedOrg) {
+        String query = "select * from organizationsEvent where eventID= '" + eventID1 + "' AND organization = '" + invitedOrg+"'";
+        try {
+            conn = sqlConnection.Connector();
+            PreparedStatement pst = conn.prepareStatement(query);
+            try (ResultSet rs = pst.executeQuery()) {
+                if (rs.next()) {
+                    boolean found = rs.getBoolean(1);
+                    if (found)
+                        return true;
+                }
+                conn.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
 }

@@ -24,17 +24,17 @@ public class View extends AView {
 
     //load create event fxml
     public void createEvent() throws IOException {
-        loadView("/createEvent.fxml");
+        loadView("/ViewFxml/createEvent.fxml");
     }
 
     //loads the update fxml file
     public void addUpdate() {
-        loadView("/addUpdate.fxml");
+        loadView("/ViewFxml/addUpdate.fxml");
     }
 
     //add implementation of uc add organization
     public void addOrg() {
-
+        loadView("/ViewFxml/addOrganization.fxml");
     }
     private void loadView(String view){
         Parent root = null;
@@ -47,6 +47,7 @@ public class View extends AView {
             e.printStackTrace();
         }
         Scene scene = new Scene(root, 600, 480);
+        scene.getStylesheets().add(getClass().getResource("/css/app.css").toExternalForm());
         Stage stage = new Stage();
         stage.setScene(scene);
         stage.initModality(Modality.APPLICATION_MODAL);

@@ -44,5 +44,7 @@ public class Controller {
     public ArrayList<String> getAllWorkersInOrganization(String organization){
         return model.getAllWorkersInOrganization(organization);
     }
-
+    public String addOrganization(int fromUser, int eventID, int toUser, String invitedOrg) {
+        return model.addOrganization(fromUser,eventID,toUser, invitedOrg);
+    }
 }
