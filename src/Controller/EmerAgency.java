@@ -17,7 +17,7 @@ public class EmerAgency extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader();
         Parent root = fxmlLoader.load(EmerAgency.class.getResource("/ViewFxml/View.fxml"));
         Model model=new Model();
-        View view=new View();//fxmlLoader.getController();
+        View view=new View();
         Controller controller=new Controller(model,view);
         view.setController(controller);
         Scene scene = new Scene(root, 600, 480);
